@@ -43,7 +43,11 @@ java -classpath target/classes game.SpaceInvaderGame
 - **Recommencez** après avoir perdu avec la touche `R`.
 
 ## Captures d'écran
-*(Ajoutez des captures d'écran du jeu ici)*
+![image](https://github.com/user-attachments/assets/a9a2c0d8-8afb-4f86-a5b3-b2b39fb92626)
+![image](https://github.com/user-attachments/assets/c1c898d4-14c6-4472-97c6-2c07bed38adf)
+![image](https://github.com/user-attachments/assets/4cfbf294-8076-434e-adc3-1f00848d9405)
+
+
 
 ## Structure du projet
 - `src/main/java/game` : Code source Java du jeu.
