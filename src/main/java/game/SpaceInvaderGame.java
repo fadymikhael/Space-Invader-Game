@@ -1,16 +1,30 @@
 package game;
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
-import javax.sound.sampled.*;
-import java.net.URL;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 
 public class SpaceInvaderGame extends JPanel implements ActionListener, KeyListener {
@@ -208,9 +222,17 @@ public class SpaceInvaderGame extends JPanel implements ActionListener, KeyListe
     }
 
     private void drawGameOver(Graphics g) {
-        g.setColor(Color.RED);
         g.setFont(new Font("Arial", Font.BOLD, 40));
-        g.drawString("Game Over !", 300, 300);
+    
+        // Vérifie si le joueur a gagné (niveau 6)
+        if (level == 6) {
+            g.setColor(Color.GREEN); 
+            g.drawString("You Win!", 300, 300);  
+        } else {
+            g.setColor(Color.RED); 
+            g.drawString("Game Over !", 300, 300);
+        }
+    
         g.setFont(new Font("Arial", Font.PLAIN, 20));
         g.drawString("Final Score: " + score, 350, 350);
         g.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -218,6 +240,8 @@ public class SpaceInvaderGame extends JPanel implements ActionListener, KeyListe
         g.drawString("Press R to Restart", 330, 400);
         drawHighScore(g);
     }
+    
+    
 
     // Dessine les icônes représentant les vies restantes
     private void drawLives(Graphics g) {
@@ -331,7 +355,7 @@ public class SpaceInvaderGame extends JPanel implements ActionListener, KeyListe
     public void actionPerformed(ActionEvent e) {
         if (gameStarted && gameRunning && !paused) {
             player.move();
-
+    
             for (int i = 0; i < bullets.size(); i++) {
                 Bullet bullet = bullets.get(i);
                 bullet.move();
@@ -340,7 +364,7 @@ public class SpaceInvaderGame extends JPanel implements ActionListener, KeyListe
                     i--;
                 }
             }
-
+    
             for (int i = 0; i < enemyBullets.size(); i++) {
                 EnemyBullet enemyBullet = enemyBullets.get(i);
                 enemyBullet.move();
@@ -349,7 +373,7 @@ public class SpaceInvaderGame extends JPanel implements ActionListener, KeyListe
                     i--;
                 }
             }
-
+    
             for (int i = 0; i < powerUps.size(); i++) {
                 PowerUp powerUp = powerUps.get(i);
                 powerUp.move();
@@ -362,16 +386,21 @@ public class SpaceInvaderGame extends JPanel implements ActionListener, KeyListe
                     i--;
                 }
             }
-
+    
             moveEnemies();
             checkEnemiesReachPlayerOrBottom();
             checkCollisions();
-
+    
             if (enemies.isEmpty()) {
                 level++;
-                createEnemies();
+                if (level == 6) {
+                    gameRunning = false; // Le jeu est terminé si le joueur atteint le niveau 6
+                    playSound("/level-completed.wav");
+                } else {
+                    createEnemies();
+                }
             }
-
+    
             if (playerIsHit()) {
                 lives--;
                 if (lives <= 0) {
@@ -379,14 +408,12 @@ public class SpaceInvaderGame extends JPanel implements ActionListener, KeyListe
                     playSound("/game-over.wav");
                 }
             }
-
+    
             spawnPowerUps();
             enemyShoot();
         }
         repaint();
     }
-
-
     /**
      * Détection des entrées clavier.
      */
